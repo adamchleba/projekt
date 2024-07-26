@@ -5,7 +5,8 @@ public class Entity {
     protected Image image;
     protected int width;
     protected int height;
-    protected int steps;
+
+
 
     public int getX() {
         return coords.x;
@@ -17,5 +18,28 @@ public class Entity {
     public Image getImage(){
         return image;
     }
+    public int setX(int x) {
+        return x;
+    }
+    public int setY(int y) {
+        return y;
+    }
 
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    protected Rectangle getCollisionRectangle(){
+        return new Rectangle(coords.x, coords.y, width, height);
+    }
+/*
+    public boolean isCollided(Rectangle otherObject){
+        return getCollisionRectangle().intersects(otherObject);
+    }
+
+ */
 }

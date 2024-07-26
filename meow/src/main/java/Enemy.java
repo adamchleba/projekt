@@ -6,8 +6,9 @@ public class Enemy extends Entity{
 
     public Player player;
     public int shieldCollisions;
-    private final int MOVE_CONSTANT = 20;
-    public String movementDirection;
+    public final int MOVE_CONSTANT = 10;
+
+
 
     public Enemy(int x, int y, String url) {
         ImageIcon ei = new ImageIcon(this.getClass().getResource("/" + url));
@@ -15,7 +16,7 @@ public class Enemy extends Entity{
         this.width = ei.getIconWidth();
         this.height = ei.getIconHeight();
         this.coords = new Coords(x, y);
-        this.movementDirection = "UP";
+
     }
     public boolean isShieldActive() {
         return shieldCollisions > 0;
@@ -31,25 +32,4 @@ public class Enemy extends Entity{
         }
     }
 
-
-    public void randomMove() {
-        Random random = new Random();
-        boolean moveHorizontally = random.nextBoolean(); // 50% pravděpodobnost pro horizontální nebo vertikální pohyb
-
-        if (moveHorizontally) {
-            boolean moveRight = random.nextBoolean(); // 50% pravděpodobnost pro pohyb doprava nebo doleva
-            if (moveRight) {
-                coords.x+=MOVE_CONSTANT; // Pohyb doprava
-            } else {
-                coords.x-=MOVE_CONSTANT; // Pohyb doleva
-            }
-        } else {
-            boolean moveUp = random.nextBoolean(); // 50% pravděpodobnost pro pohyb nahoru nebo dolů
-            if (moveUp) {
-                coords.y+=MOVE_CONSTANT; // Pohyb nahoru
-            } else {
-                coords.y-=MOVE_CONSTANT; // Pohyb dolů
-            }
-        }
-    }
 }

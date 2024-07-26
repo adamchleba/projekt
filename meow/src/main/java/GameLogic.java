@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -10,6 +11,7 @@ public class GameLogic {
     public int speed;
     public ArrayList<Shield> shields;
     public ArrayList<Thunderbolt> thunders;
+    public ArrayList<Wall> walls;
 
 
 
@@ -19,6 +21,7 @@ public class GameLogic {
         this.speed = speed;
         this.shields = new ArrayList<>();
         this.thunders = new ArrayList<>();
+        this.walls = new ArrayList<>();
     }
 
     public void initialize() {
@@ -27,6 +30,20 @@ public class GameLogic {
         Enemy enemy2 = new Enemy(900,255, "mouse2.png");
         mice.add(enemy1);
         mice.add(enemy2);
+
+
+
+        Wall wall1 = new Wall(900,450,10,100);
+        Wall wall2 = new Wall(500,500,10,100);
+        Wall wall3 = new Wall(900,250,10,100);
+        Wall wall4 = new Wall(700,100,10,100);
+
+        walls.add(wall1);
+        walls.add(wall2);
+        walls.add(wall3);
+        walls.add(wall4);
+
+
 
         spawnShield("shield.png");
         spawnThunderbolt("bolt.png");
@@ -52,12 +69,8 @@ public class GameLogic {
     public void update() {
         if (lives <= 0) return; // Don't update if the game is over
 
-        // Update enemy positions to chase the player
-        for (Enemy enemy : mice) {
-            //chasePlayer(enemy, player);
-        }
 
-        // Check for collisions with enemies
+
         boolean collisionDetected = false;
         Enemy collidedEnemy = null;
         for (Enemy enemy : mice) {
@@ -92,10 +105,9 @@ public class GameLogic {
                 Enemy newEnemy = generateRandomEnemy();
                 mice.add(newEnemy);
 
-                // Spawn a new shield at a random location
+
                 spawnShield("shield.png");
 
-                // Spawn a new thunderbolt at a random location
                 spawnThunderbolt("bolt.png");
             }
         }
@@ -122,30 +134,85 @@ public class GameLogic {
             System.out.println("Shield collected by enemy!");
         }
 
-        // Check for collisions with thunderbolts
+
         if (!thunders.isEmpty()) {
-            Thunderbolt thunderbolt = thunders.get(0); // Get the first thunderbolt
+            Thunderbolt thunderbolt = thunders.get(0);
             if (player.getX() < thunderbolt.getX() + thunderbolt.width &&
                     player.getX() + player.width > thunderbolt.getX() &&
                     player.getY() < thunderbolt.getY() + thunderbolt.height &&
                     player.getY() + player.height > thunderbolt.getY()) {
 
-                // Handle thunderbolt collection
+
                 thunders.remove(thunderbolt);
                 System.out.println("Thunderbolt collected!");
 
-                // 25% chance to win instantly
+
                 if (random.nextDouble() < 0.25) {
                     System.out.println("Instant win!");
-                    lives = 0; // This ends the game
+                    lives = 0;
                 }
             }
         }
-
         for (Enemy enemy: mice){
-            enemy.randomMove();
+            Random random = new Random();
+            boolean moveHorizontally = random.nextBoolean();
+
+            if (moveHorizontally) {
+                boolean moveRight = random.nextBoolean();
+                if (moveRight) {
+                    if (!checkPossibleEnemyMoveWithWalls(enemy, Direction.RIGHT)){
+                        enemy.coords.x+=enemy.MOVE_CONSTANT;
+                    }
+                } else {
+                    if (!checkPossibleEnemyMoveWithWalls(enemy, Direction.LEFT)){
+                        enemy.coords.x-=enemy.MOVE_CONSTANT;
+                    }
+
+                }
+            } else {
+                boolean moveUp = random.nextBoolean();
+                if (moveUp) {
+                    if (!checkPossibleEnemyMoveWithWalls(enemy, Direction.UP)){
+                        enemy.coords.y-=enemy.MOVE_CONSTANT;
+                    }
+
+                } else {
+                    if (!checkPossibleEnemyMoveWithWalls(enemy, Direction.DOWN)){
+                        enemy.coords.y+=enemy.MOVE_CONSTANT;
+                    }
+                }
+            }
+
         }
+
     }
+
+    public boolean checkPossibleEnemyMoveWithWalls(Enemy enemy, Direction direction){
+        Rectangle newEnemyRectangleAfterMove = null;
+        switch (direction){
+            case UP -> {
+                newEnemyRectangleAfterMove = new Rectangle(enemy.coords.x, enemy.coords.y - enemy.MOVE_CONSTANT, enemy.getWidth(), enemy.getHeight());
+            }
+            case DOWN -> {
+                newEnemyRectangleAfterMove = new Rectangle(enemy.coords.x, enemy.coords.y + enemy.MOVE_CONSTANT, enemy.getWidth(), enemy.getHeight());
+            }
+            case LEFT -> {
+                newEnemyRectangleAfterMove = new Rectangle(enemy.coords.x - enemy.MOVE_CONSTANT, enemy.coords.y, enemy.getWidth(), enemy.getHeight());
+            }
+            case RIGHT -> {
+                newEnemyRectangleAfterMove = new Rectangle(enemy.coords.x + enemy.MOVE_CONSTANT, enemy.coords.y, enemy.getWidth(), enemy.getHeight());
+            }
+        }
+
+        for (Wall wall: walls){
+            if (newEnemyRectangleAfterMove.intersects(wall.getRectangle())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     private Enemy generateRandomEnemy() {
         int x = random.nextInt(1080);
         int y = random.nextInt(720);
@@ -153,24 +220,8 @@ public class GameLogic {
         String image = enemyImages[random.nextInt(enemyImages.length)];
         return new Enemy(x, y, image);
     }
-    /*private void chasePlayer(Enemy enemy, Player player) {
-        int speed = 2;
 
-        if (player.getX() > enemy.coords.x) {
-            enemy.coords.x += speed;
-        } else if (player.getX() < enemy.coords.x) {
-            enemy.coords.x -= speed;
-        }
 
-        if (player.getY() > enemy.coords.y) {
-            enemy.coords.y += speed;
-        } else if (player.getY() < enemy.coords.y) {
-            enemy.coords.y -= speed;
-        }
-
-        enemy.coords.x = Math.max(0, Math.min(enemy.coords.x, 1080 - enemy.width));
-        enemy.coords.y = Math.max(0, Math.min(enemy.coords.y, 720 - enemy.height));
-    }*/
     public void spawnShield(String imagePath) {
         int x = random.nextInt(1080);
         int y = random.nextInt(720);
@@ -182,5 +233,9 @@ public class GameLogic {
         int y = random.nextInt(720);  // Assuming screen height is 720
         Thunderbolt newThunderbolt = new Thunderbolt(x, y, imagePath);
         thunders.add(newThunderbolt);
+    }
+
+    public ArrayList<Wall> getAllWalls() {
+        return walls;
     }
 }

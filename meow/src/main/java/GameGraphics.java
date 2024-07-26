@@ -36,10 +36,11 @@ public class GameGraphics extends JFrame {
 
             super.paintComponent(g);
 
-            drawWall(700,100,10,100,g);
-            drawWall(900,250,10,100,g);
-            drawWall(500,500,10,100,g);
-            drawWall(900,450,10,100,g);
+            for (Wall wall: logic.getAllWalls()) {
+                g.setColor(Color.BLACK);
+                g.fillRect(wall.getX(), wall.getY(), wall.getWidth(), wall.getHeight());
+
+            }
 
 
 
@@ -80,10 +81,7 @@ public class GameGraphics extends JFrame {
     private void drawThunderbolt(Graphics g, Thunderbolt thunderbolt) {
         g.drawImage(thunderbolt.getImage(), thunderbolt.getX(), thunderbolt.getY(), null);
     }
-    public void drawWall(int x, int y, int width, int height, Graphics g){
-        g.setColor(Color.BLACK);
-        g.fillRect(x,y,width,height);
-    }
+
 
 
 }
