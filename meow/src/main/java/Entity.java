@@ -7,7 +7,6 @@ public class Entity {
     protected int height;
     protected int steps;
 
-
     public int getX() {
         return coords.x;
     }

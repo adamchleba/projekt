@@ -141,6 +141,10 @@ public class GameLogic {
                 }
             }
         }
+
+        for (Enemy enemy: mice){
+            enemy.randomMove();
+        }
     }
     private Enemy generateRandomEnemy() {
         int x = random.nextInt(1080);
