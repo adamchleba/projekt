@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -10,6 +11,7 @@ public class GameLogic {
     public int speed;
     public ArrayList<Shield> shields;
     public ArrayList<Thunderbolt> thunders;
+
 
 
 
@@ -27,6 +29,8 @@ public class GameLogic {
         Enemy enemy2 = new Enemy(900,255, "mouse2.png");
         mice.add(enemy1);
         mice.add(enemy2);
+
+
 
         spawnShield("shield.png");
         spawnThunderbolt("bolt.png");
@@ -52,12 +56,8 @@ public class GameLogic {
     public void update() {
         if (lives <= 0) return; // Don't update if the game is over
 
-        // Update enemy positions to chase the player
-        for (Enemy enemy : mice) {
-            //chasePlayer(enemy, player);
-        }
 
-        // Check for collisions with enemies
+
         boolean collisionDetected = false;
         Enemy collidedEnemy = null;
         for (Enemy enemy : mice) {
@@ -92,10 +92,9 @@ public class GameLogic {
                 Enemy newEnemy = generateRandomEnemy();
                 mice.add(newEnemy);
 
-                // Spawn a new shield at a random location
+
                 spawnShield("shield.png");
 
-                // Spawn a new thunderbolt at a random location
                 spawnThunderbolt("bolt.png");
             }
         }
@@ -122,26 +121,31 @@ public class GameLogic {
             System.out.println("Shield collected by enemy!");
         }
 
-        // Check for collisions with thunderbolts
+
         if (!thunders.isEmpty()) {
-            Thunderbolt thunderbolt = thunders.get(0); // Get the first thunderbolt
+            Thunderbolt thunderbolt = thunders.get(0);
             if (player.getX() < thunderbolt.getX() + thunderbolt.width &&
                     player.getX() + player.width > thunderbolt.getX() &&
                     player.getY() < thunderbolt.getY() + thunderbolt.height &&
                     player.getY() + player.height > thunderbolt.getY()) {
 
-                // Handle thunderbolt collection
+
                 thunders.remove(thunderbolt);
                 System.out.println("Thunderbolt collected!");
 
-                // 25% chance to win instantly
+
                 if (random.nextDouble() < 0.25) {
                     System.out.println("Instant win!");
-                    lives = 0; // This ends the game
+                    lives = 0;
                 }
             }
         }
+        for (Enemy enemy: mice){
+            enemy.moveRandomly();
+        }
     }
+
+
     private Enemy generateRandomEnemy() {
         int x = random.nextInt(1080);
         int y = random.nextInt(720);
@@ -149,24 +153,8 @@ public class GameLogic {
         String image = enemyImages[random.nextInt(enemyImages.length)];
         return new Enemy(x, y, image);
     }
-    /*private void chasePlayer(Enemy enemy, Player player) {
-        int speed = 2;
 
-        if (player.getX() > enemy.coords.x) {
-            enemy.coords.x += speed;
-        } else if (player.getX() < enemy.coords.x) {
-            enemy.coords.x -= speed;
-        }
 
-        if (player.getY() > enemy.coords.y) {
-            enemy.coords.y += speed;
-        } else if (player.getY() < enemy.coords.y) {
-            enemy.coords.y -= speed;
-        }
-
-        enemy.coords.x = Math.max(0, Math.min(enemy.coords.x, 1080 - enemy.width));
-        enemy.coords.y = Math.max(0, Math.min(enemy.coords.y, 720 - enemy.height));
-    }*/
     public void spawnShield(String imagePath) {
         int x = random.nextInt(1080);
         int y = random.nextInt(720);

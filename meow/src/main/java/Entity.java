@@ -5,7 +5,7 @@ public class Entity {
     protected Image image;
     protected int width;
     protected int height;
-    protected int steps;
+
 
 
     public int getX() {
@@ -18,5 +18,18 @@ public class Entity {
     public Image getImage(){
         return image;
     }
+    public int setX(int x) {
+        return x;
+    }
+    public int setY(int y) {
+        return y;
+    }
 
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
 }
